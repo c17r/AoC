@@ -6,3 +6,5 @@ Advent of Code
 Some people are into speed running the competition. You've got to be pretty quick to make it into the top 100, 1-2 minutes per part!
 
 I'm just in it for the fun.
+
+I started with 2018. When I've got time I'll work on previous years.
