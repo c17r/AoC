@@ -1,4 +1,5 @@
-#Advent of Code
+Advent of Code
+=
 
 [The Python Challenge](http://www.pythonchallenge.com/) plus the Christmas advent calendar means [Advent of Code](https://adventofcode.com/)! On midnight from 01-Dec to 25-Dec a new puzzle is released.
 
