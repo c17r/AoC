@@ -7,4 +7,6 @@ Some people are into speed running the competition. You've got to be pretty quic
 
 I'm just in it for the fun.
 
+- **14-Dec-2018 Update:** I've gotten hooked. Even though I'm nowhere near fast enough for the top 100 I'm still up at midnight to be ranked against everyone else with the global clock. I think I have a problem.
+
 I started with 2018. When I've got time I'll work on previous years.
