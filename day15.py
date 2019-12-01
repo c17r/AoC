@@ -10,30 +10,14 @@ def contents(year, day, part):
 def X(point): return point[0]
 def Y(point): return point[1]
 
-def R(point): return point[0]
-def C(point): return point[1]
-
-origin = (0, 0)
-xy_HEADINGS = xy_UP, xy_LEFT, xy_DOWN, xy_RIGHT = (0, -1), (-1, 0), (0, 1), (1, 0)
-rc_HEADINGS = rc_UP, rc_LEFT, rc_DOWN, rc_RIGHT = (-1, 0), (0, -1), (1, 0), (0, 1)
-
-def xy_turn_right(heading): return xy_HEADINGS[HEADINGS.index(heading) - 1]
-def xy_turn_around(heading):return xy_HEADINGS[HEADINGS.index(heading) - 2]
-def xy_turn_left(heading):  return xy_HEADINGS[HEADINGS.index(heading) - 3]
-
-def rc_turn_right(heading): return rc_HEADINGS[HEADINGS.index(heading) - 1]
-def rc_turn_around(heading):return rc_HEADINGS[HEADINGS.index(heading) - 2]
-def rc_turn_left(heading):  return rc_HEADINGS[HEADINGS.index(heading) - 3]
-
-
-def neighbors4(point): 
+def neighbors4(point):
     "The four neighboring squares."
     x, y = point
-    return (          (x, y-1),
-            (x-1, y),           (x+1, y), 
-                      (x, y+1))
+    return {          (x, y-1),
+            (x-1, y),           (x+1, y),
+                      (x, y+1)}
 
-def mapt(fn, *args): 
+def mapt(fn, *args):
     "Do a map, and make the results into a tuple."
     return tuple(map(fn, *args))
 
@@ -101,39 +85,39 @@ def day15():
                 y += 1
                 x = 0
             self.valid_field_points = self.field.keys()
-            self.non_walls = [p for p in self.field.keys() if self.field[p] == "."]
+            self.non_walls = {p for p in self.field.keys() if self.field[p] == "."}
 
         def active_units(self):
-            return [u for u in self.units if u.alive]
+            return {u for u in self.units if u.alive}
 
         def active_enemies(self, current):
-            return [u for u in self.active_units() if u.team != current.team]
+            return {u for u in self.active_units() if u.team != current.team}
 
         def valid_neighbors(self, point):
-            return set([n for n in neighbors4(point) if n in self.non_walls])
+            return neighbors4(point) & self.non_walls
 
         def empty_neighbors(self, target):
-            return set([n for n in self.valid_neighbors(target.point) if self.field[n] == "."])
+            return {n for n in self.valid_neighbors(target.point) if self.field[n] == "."}
 
         def attackable_enemies(self, current):
             current_surroundings = self.valid_neighbors(current.point)
-            return set([u for u in self.active_enemies(current) if u.point in current_surroundings])
+            return {u for u in self.active_enemies(current) if u.point in current_surroundings}
 
         def active_count(self):
             return Counter(u.team for u in self.active_units())
 
         def unoccupied_field_points(self):
-            unit_positions = set([u.point for u in self.active_units()])
-            return set([p for p in self.non_walls if p not in unit_positions])
+            unit_positions = {u.point for u in self.active_units()}
+            return self.non_walls - unit_positions
 
         def shortest_path(self, current, target):
             unoccupied_field_points = self.unoccupied_field_points()
-            valid = lambda pt: set([n for n in self.valid_neighbors(pt) if n in unoccupied_field_points])
+            valid = lambda pt: self.valid_neighbors(pt) & unoccupied_field_points
 
             destinations = self.empty_neighbors(target)
             candidates = defaultdict(list)
             for point in destinations:
-                path = bfs(current.point, valid, (point,))
+                path = bfs(current.point, valid, {point})
                 if path:
                     path.pop(0)
                     candidates[len(path)].append(path)
@@ -142,11 +126,8 @@ def day15():
 
             min_path = min(candidates.keys())
             min_paths = candidates[min_path]
-            s_min_paths = sorted(min_paths, key=lambda e: book_order(e[0]))
+            s_min_paths = sorted(min_paths, key=lambda e: read_order(e[0]))
             return s_min_paths[0]
-
-    def book_order(pt):       
-        return (Y(pt), X(pt))
 
     class Unit:
         def __init__(self, game_state, point, team, unit_num):
@@ -157,18 +138,18 @@ def day15():
             self.health = 200
             self.alive = True
             self.unit_num = unit_num
-            
+
         def __str__(self):
             return f"{self.team}{self.unit_num}"
 
         def __repr__(self):
             return f"<Unit {str(self)} p={self.point} h={self.health} a={self.alive}"
-            
+
         def attacked(self, attack_power):
             self.health -= attack_power
             if self.health <= 0:
                 self.alive = False
-        
+
         def turn(self):
             if len(self.game_state.active_enemies(self)) == 0:
                 return False
@@ -178,7 +159,7 @@ def day15():
             if moved:
                 self.attack_if_possible()
             return True
-                
+
         def attack_if_possible(self):
             enemies = self.game_state.attackable_enemies(self)
             if not enemies:
@@ -189,17 +170,17 @@ def day15():
                 candidates[enemy.health].append(enemy)
 
             lowest = min(candidates.keys())
-            targets = sorted(candidates[lowest], key=lambda c: book_order(c.point))
+            targets = sorted(candidates[lowest], key=lambda c: read_order(c.point))
             target = targets[0]
             if GLOBAL_DEBUG: print(str(self), ": hit ", str(target))
             target.attacked(self.attack_power)
             return True
-            
+
         def move_towards_enemy(self):
             enemies = self.game_state.active_enemies(self)
             if not enemies:
                 return False
-            
+
             candidates = defaultdict(list)
             for enemy in enemies:
                 path = self.game_state.shortest_path(self, enemy)
@@ -208,15 +189,18 @@ def day15():
 
             if not candidates.keys():
                 return False
-            
+
             min_path = min(candidates.keys())
             min_paths = candidates[min_path]
-            targets = sorted(min_paths, key=lambda t: book_order(t[0].point))
+            targets = sorted(min_paths, key=lambda t: read_order(t[0].point))
             target = targets[0]
             if GLOBAL_DEBUG: print(str(self), ": move ", self.point, " to ", target[1][0], " towards ", str(target[0]))
             self.point = target[1][0]
             return True
-            
+
+    def read_order(pt):
+        return (Y(pt), X(pt))
+
     def print_field(t, gs):
         print(f'Round {t}')
         p_units = {u.point: u for u in gs.active_units()}
@@ -233,6 +217,7 @@ def day15():
             print()
 
         print_units(gs, 'E')
+        print()
         print_units(gs, 'G')
         print()
         print()
@@ -241,29 +226,29 @@ def day15():
         squad = [u for u in gs.units if u.team == team]
         for idx, unit in enumerate(sorted(squad, key=lambda u: u.health, reverse=True), start=1):
             print(F"{idx}:{unit.team}{unit.unit_num}({unit.health})", end="  ")
-        
+
     def end_game(t, gs):
         es = [u for u in gs.active_units() if u.team == "E"]
         gs = [u for u in gs.active_units() if u.team == "G"]
-        
+
         eht = sum(e.health for e in es)
         ght = sum(g.health for g in gs)
-        
+
         print(f" Rounds: {t}")
         print(f"  Elves: {len(es)} units, total {eht}, score: {eht*t}")
         print(f"Goblins: {len(gs)} units, total {ght}, score: {ght*t}")
 
     def do_round(t, gs):
         a_units = gs.active_units()
-        sa_units = sorted(a_units, key=lambda u: book_order(u.point))
-        
+        sa_units = sorted(a_units, key=lambda u: read_order(u.point))
+
         for unit in sa_units:
-            if not unit.alive: 
+            if not unit.alive:
                 continue
             if unit.turn() is False:
                 return True
         return False
-            
+
     def main(file):
         gs = GameState(contents(2018, 15, file))
         t = 0
@@ -284,13 +269,12 @@ def day15():
             t += 1
 
     GLOBAL_DEBUG = False
-    
+
     #for f in ("0a", "0b", "0c", "0d", "0e", "0f"):
     for f in ("1",):
         print(f"---- {f} begin ----")
         main(f)
         print(f"---- {f} end ----")
-        
 
 day15()
 
