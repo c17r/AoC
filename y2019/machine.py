@@ -1,6 +1,7 @@
 from collections import namedtuple
 
-Instruction = namedtuple('Instruction', ['func', 'ip'])
+Instruction = namedtuple('Instruction', 'func ip')
+MachineState = namedtuple('MachineState', 'program, ip, rb, params')
 
 class Machine:
     def __init__(self, ops, inp, outp, haltf):
@@ -25,11 +26,16 @@ class Machine:
 
     def run(self):
         while True:
-            old_ip = self.ip
-            instruction = self.get_instruction()
-            if (instruction.func()):
+            if self.step() is False:
                 return
-            self.ip += instruction.ip if self.ip == old_ip else 0
+
+    def step(self):
+        old_ip = self.ip
+        instruction = self.get_instruction()
+        if (instruction.func()):
+            return False
+        self.ip += instruction.ip if self.ip == old_ip else 0
+        return True
 
     def get_instruction(self):
         op = f"{self.ops[self.ip]}"
@@ -62,3 +68,17 @@ class Machine:
     def jez(self): self.ip = self.read(2) if self.read(1) == 0 else self.ip
     def clt(self): self.write(3, 1 if self.read(1) < self.read(2) else 0)
     def ceq(self): self.write(3, 1 if self.read(1) == self.read(2) else 0)
+
+class FMachine(Machine):
+    def __init__(self, *args, **kwargs):
+        super(*args, **kwargs)
+        self.history = []
+
+    def _freeze(self):
+        self.history.append(MachineState(self.ops, self.ip, self.rb. self.params))
+
+    def run(self):
+        while True:
+            self._freeze()
+            if self.step() is False:
+                return
