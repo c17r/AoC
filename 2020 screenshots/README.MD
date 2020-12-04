@@ -1,0 +1,1 @@
+2020 Day 1 was the "Great Crash" where traffic was 150%+ 2019 Day 1. I was able to get onto the Global Leaderboard by mashing `Refresh` as fast as I could. Understandably, the rankings for this day were removed but I kept the screenshots showing that it did happen for me at least once!
