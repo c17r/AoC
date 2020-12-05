@@ -9,7 +9,7 @@ python = "^3.9"
 jupyter = {extras = ["notebook"], version = "^1.0.0"}
 arrow = "^0.17.0"
 multiprocess = "^0.70.11"
-advent-of-code-data = "^0.8.5"
+advent-of-code-data = {path = "../../contrib/advent-of-code-data", develop = true}
 
 [tool.poetry.dev-dependencies]
 

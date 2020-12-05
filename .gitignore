@@ -1,7 +1,10 @@
+# AOC specific
+private-leaderboards
+.aocd/
+
 venv
 
 .DS_Store
-private-leaderboards
 
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
