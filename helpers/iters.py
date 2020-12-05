@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 
 cat = ''.join
 
@@ -22,7 +23,7 @@ def grouper(iterable, n, fillvalue=None):
 def overlapping(iterable, n):
 	"""Generate all (overlapping) n-element subsequences of iterable.
 	overlapping('ABCDEFG', 3) --> ABC BCD CDE DEF EFG"""
-	if isinstance(iterable, abc.Sequence):
+	if isinstance(iterable, Sequence):
 		yield from (iterable[i:i+n] for i in range(len(iterable) + 1 - n))
 	else:
 		result = deque(maxlen=n)
@@ -37,7 +38,7 @@ def pairwise(iterable):
 
 def sequence(iterable, type=tuple):
 	"Coerce iterable to sequence: leave alone if already a sequence, else make it `type`."
-	return iterable if isinstance(iterable, abc.Sequence) else type(iterable)
+	return iterable if isinstance(iterable, Sequence) else type(iterable)
 
 def join(iterable, sep=''):
 	"Join the items in iterable, converting each to a string first."
