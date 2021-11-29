@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 environ["AOCD_DIR"] = "./.aocd"
+environ["AOCD_CONFIG_DIR"] = "./.aocd"
 
 from aocd import get_data, submit
 
