@@ -1,7 +1,10 @@
 from .shared import *
+
 __all__ = [
 	'R', 'C', 
 	'HEADINGS', 'UP', 'LEFT', 'DOWN', 'RIGHT',
+	'HEADINGS_OTHER', 'UPLEFT', 'DOWNLEFT', 'DOWNRIGHT', 'UPRIGHT',
+	'HEADINGS_ALL',
 	'turn_right', 'turn_around', 'turn_left'
 	'chess_move', 
 	'data_to_grid', 
@@ -9,25 +12,34 @@ __all__ = [
 	'grid_print',
 ]
 
-R = lambda pt: pt[0]
-C = lambda pt: pt[1]
 
 HEADINGS = UP, LEFT, DOWN, RIGHT = (-1, 0), (0, -1), (1, 0), (0, 1)
+HEADINGS_OTHER = UPLEFT, DOWNLEFT, DOWNRIGHT, UPRIGHT = (-1, -1), (1, -1), (1, 1), (-1, 1)
+HEADINGS_ALL = UP, UPLEFT, LEFT, DOWNLEFT, DOWN, DOWNRIGHT, RIGHT, UPRIGHT
 
+
+R = lambda pt: pt[0]
+C = lambda pt: pt[1]
 turn_right = lambda heading: HEADINGS[HEADINGS.index(heading) - 1]
 turn_around = lambda heading: HEADINGS[HEADINGS.index(heading) - 2]
 turn_left = lambda heading: HEADINGS[HEADINGS.index(heading) - 3]
 
+
 def chess_move(*, rights=0, downs=0, lefts=0, ups=0):
 	return chess_move_inner((rights, RIGHT), (downs, DOWN), (lefts, LEFT), (ups, UP))
+
 
 def data_to_grid(raw):
 	grid, hf, hs = data_to_grid_inner(raw, lambda f, s: (f, s))
 	return grid, hs, hf
 
-def grid_yield(grid):
+
+def grid_yield(grid, include_eol=False):
 	for f, s, eol in grid_yield_inner(grid):
-		yield f, s, eol
+		if include_eol or eol is False:
+			yield f, s, eol
+
 
 def grid_print(grid, test=always(False)):
-	grid_print_inner(grid, grid_yield, test)
+	gy = lambda grid: grid_yield(grid, True)
+	grid_print_inner(grid, gy, test)

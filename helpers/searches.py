@@ -1,9 +1,11 @@
 from .functional import always
+
 __all__ = [
 	'Astar',
 	'AstarSteps',
 	'bfs',
 ]
+
 
 def Astar(start, moves_func, h_func, cost_func=always(1)):
 	"Find a shortest sequence of states from start to a goal state (where h_func(s) == 0)."
@@ -21,9 +23,11 @@ def Astar(start, moves_func, h_func, cost_func=always(1)):
 				heappush(frontier, (g + h_func(s2), s2))
 				path_cost[s2] = g
 				previous[s2] = s
+
 				
 def AstarSteps(*args, **kwargs):
 	return len(Astar(*args, **kwargs)) - 1
+
 
 def bfs(start, moves_func, goals):
 	"Breadth-first search"

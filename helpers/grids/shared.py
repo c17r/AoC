@@ -1,8 +1,11 @@
-from ..functional import always, mapt
+from ..functional import always
+from ..iters import add
 
-def add(A, B): 
-	"Element-wise addition of two n-dimensional vectors."
-	return mapt(sum, zip(A, B))
+
+def move(start, dir, amt=1):
+	dist = dir[0] * amt, dir[1] * amt
+	return add(start, dist)
+
 	
 def chess_move_inner(rights, downs, lefts, ups):
 	rv = (0, 0)
@@ -14,6 +17,7 @@ def chess_move_inner(rights, downs, lefts, ups):
 
 	return rv
 
+
 def data_to_grid_inner(raw, fs_to_c):
 	grid, hf, hs = {}, None, None
 	
@@ -23,6 +27,7 @@ def data_to_grid_inner(raw, fs_to_c):
 			hs = si if hs is None or si > hs else hs
 		hf = fi if hf is None or fi > hf else hf
 	return grid, hf, hs
+
 
 def grid_yield_inner(grid):
 	lf = hf = ls = hs = None
@@ -35,6 +40,7 @@ def grid_yield_inner(grid):
 		for ts in range(ls, hs + 1):
 			yield tf, ts, False
 		yield None, None, True
+
 
 def grid_print_inner(grid, grid_yield, test=always(False)):
 	for f, s, eol in grid_yield(grid):
