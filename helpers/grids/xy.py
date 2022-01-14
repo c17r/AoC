@@ -41,5 +41,5 @@ def grid_yield(grid, include_eol=False):
 
 
 def grid_print(grid, test=always(False)):
-	gy = lambda grid: grid_yield(grid, True)
+	gy = lambda grid: grid_yield(grid, include_eol=True)
 	grid_print_inner(grid, gy, test)

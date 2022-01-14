@@ -32,10 +32,10 @@ def data_to_grid_inner(raw, fs_to_c):
 def grid_yield_inner(grid):
 	lf = hf = ls = hs = None
 	for f, s in grid.keys():
-		lf = f if lf is None or f < lf else lf
-		hf = f if hf is None or f > hf else hf
-		ls = s if ls is None or s < ls else ls
-		hs = s if hs is None or s > hs else hs
+		lf = f if lf is None else min(lf, f)
+		hf = f if hf is None else max(hf, f)
+		ls = s if ls is None else min(ls, s)
+		hs = s if hs is None else max(hs, s)
 	for tf in range(lf, hf + 1):
 		for ts in range(ls, hs + 1):
 			yield tf, ts, False
