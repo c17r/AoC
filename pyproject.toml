@@ -5,12 +5,12 @@ description = "Advent of Code project"
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-arrow = "^0.17.0"
-multiprocess = "^0.70.11"
-advent-of-code-data = "^1.1.0"
-browser-cookie3 = "^0.13.0"
-notebook = "^6.4.12"
+python = "^3.11"
+arrow = "^1.2.3"
+multiprocess = "^0.70.14"
+advent-of-code-data = "^1.2.0"
+browser-cookie3 = "^0.16.2"
+notebook = "^6.5.2"
 
 [tool.poetry.dev-dependencies]
 
