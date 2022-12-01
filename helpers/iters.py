@@ -36,6 +36,17 @@ def grouper(iterable, n, fillvalue=None):
 	return zip_longest(*args, fillvalue=fillvalue)
 
 
+def splitter(iterable, split_func, post_func=None):
+	"""Splits iterable into multiple iterables, based on a split function"""
+	rv = []
+	for item in iterable:
+		if split_func(item):
+			yield rv if post_func is None else post_func(rv)
+			rv = []
+			continue
+		rv.append(item)
+
+
 def overlapping(iterable, n):
 	"""Generate all (overlapping) n-element subsequences of iterable.
 	overlapping('ABCDEFG', 3) --> ABC BCD CDE DEF EFG"""
