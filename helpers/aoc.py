@@ -14,9 +14,7 @@ from aocd import get_data, submit # needs to be AFTER the environ lines so it ca
 
 def get_raw(year, day, post=None):
 	rv = get_data(year=year, day=day)
-	if post is not None:
-		rv = post(rv)
-	return rv
+	return rv if post is None else post(rv)
 
 
 def get_lines(year, day, post=None):
