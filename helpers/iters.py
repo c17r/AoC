@@ -2,7 +2,7 @@ import re
 
 from collections.abc import Sequence
 from collections import deque
-from itertools import zip_longest, combinations, islice
+from itertools import zip_longest, combinations, islice, chain
 
 from .functional import mapt
 
@@ -13,6 +13,10 @@ map_ints = lambda ints: list(map(int, list(ints)))
 get_ints = lambda line: map_ints(re.findall(r'-?\d+', line))        
 transpose = lambda matrix: zip(*matrix)
 
+
+def flatten(iterable):
+	return list(chain(*[ele if isinstance(ele, list) 
+		else [ele] for ele in iterable]))
 
 def add(A, B): 
 	"Element-wise addition of two n-dimensional vectors."
